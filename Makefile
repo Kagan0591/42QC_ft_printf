@@ -7,10 +7,6 @@
 NAME = libftprintf.a
 
 SRCS_FILES 		=	ft_printf.c \
-					ft_printf_utils_pt1.c \
-					ft_printf_utils_pt2.c \
-					ft_printf_utils_libft_functions_pt1.c \
-
 
 #B_SRCS_FILES	= 	 \
 
@@ -34,9 +30,10 @@ CFLAGS 		= -Wall -Werror -Wextra
 AR 			= ar -cr
 
 ### Autres Fonctions ###
-
 RM 			= rm -rf
 NORMINETTE 	= norminette
+LIBFT_DIR = 42Qc_libft/
+LIBFT = ${MAKE} --silent -C ${LIBFT_DIR}
 
 ### Colour var ###
 
@@ -63,20 +60,24 @@ WHITE		= \033[37m
 all: obj $(NAME)
 
 $(OBJS_DIR)%.o:%.c
-	$(CC) $(CFLAGS) -I$(INCLUDE_DIR) -o $@ -c $<
+	$(CC) $(CFLAGS) -I${LIBFT_DIR} -I${INCLUDE_DIR} -I. -o $@ -c $<
 
 $(NAME): $(OBJS)
-	$(AR) $(NAME) $(OBJS)
+	${LIBFT}
+	$(AR) $(NAME) $(OBJS) ${LIBFT_DIR}*.o
 	@echo "${OBJS} ${GREEN} ${BOLD}\n\nObjects files are added to the archive libftprintf.a correctly\n${END}"
 
 bonus: ${NAME} ${BONUS_OBJS}
+	${LIBFT}
 	@${ARCHIVE} ${NAME} ${BONUS_OBJS}
 	@echo "${BONUS_OBJS} ${GREEN} ${BOLD}\n\nObjects files And bonus objects files are added to the archive libftprintf.a correctly\n${END}"
 
 exec:
+	${LIBFT}
 	${CC} ${FLAGS} -I${INCLUDE_DIR} -o test ${SRCS}
 
 test: norm
+	${LIBFT}
 	${CC} ${FLAGS} -I${INCLUDE_DIR} -Og -o test ${SRCS} ft_printf_main.c
 	valgrind ./test
 
@@ -90,10 +91,11 @@ clean:
 	$(RM) $(OBJS)
 
 fclean:	clean
+	${LIBFT} fclean
 	$(RM) $(NAME) $(OBJS_DIR) test
 	@echo "${BONUS_OBJS} ${GREEN} ${BOLD}\n\nObjects files And possibly bonus objects files are deleted to the archive libftprintf.a correctly\n${END}"
 
 
 re:	fclean all
 
-phony: norm comp
+phony: bonus exec test norm clean fclean
